@@ -1,0 +1,2 @@
+# IdleFactoryGame
+Idle Factory Game
