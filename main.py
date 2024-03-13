@@ -1,20 +1,22 @@
-import tkinter as tk
-from tkinter import messagebox
-import threading
-import time
-import os
+import tkinter as tk  # Importing tkinter for GUI
+from tkinter import messagebox  # Importing messagebox for user alerts
+import threading  # Importing threading for auto-producing money
+import time  # Importing time for auto-save interval
+import os  # Importing os for accessing appdata
 
 class IdleFactoryGame:
     def __init__(self, master):
+        # Initialize the IdleFactoryGame class with a tkinter master (main window)
         self.master = master
         self.master.title("Idle Factory Game")
         self.master.geometry("400x350")
 
         self.data_file = os.path.join(os.getenv("APPDATA"), "idle_factory_game_data.txt")
+        # Set the data file path to store the game progress in the user's appdata folder
 
-        self.load_progress()
+        self.load_progress()  # Load the game progress from the data file
 
-        self.create_widgets()
+        self.create_widgets()  # Create all the GUI widgets
 
         # Start auto-producing money in a separate thread
         self.auto_produce_thread = threading.Thread(target=self.auto_produce_money)
@@ -22,21 +24,25 @@ class IdleFactoryGame:
         self.auto_produce_thread.start()
 
     def load_progress(self):
+        # Load game progress from the data file
         if os.path.exists(self.data_file):
             with open(self.data_file, "r") as file:
                 lines = file.readlines()
-                self.money = int(lines[0].strip())
-                self.production_rate = int(lines[1].strip())
+                self.money = int(lines[0].strip())  # Load money
+                self.production_rate = int(lines[1].strip())  # Load production rate
         else:
-            self.money = 0
-            self.production_rate = 1
+            self.money = 0  # Initialize money
+            self.production_rate = 1  # Initialize production rate
 
     def save_progress(self):
+        # Save game progress to the data file
         with open(self.data_file, "w") as file:
-            file.write(f"{self.money}\n")
-            file.write(f"{self.production_rate}\n")
+            file.write(f"{self.money}\n")  # Save money
+            file.write(f"{self.production_rate}\n")  # Save production rate
 
     def create_widgets(self):
+        # Create all the GUI widgets
+
         # Frame for the money display
         money_frame = tk.Frame(self.master)
         money_frame.pack(pady=10)
@@ -74,44 +80,8 @@ class IdleFactoryGame:
         self.reset_button.pack(pady=5)
 
     def produce(self):
+        # Manually produce money
         self.money += self.production_rate
         self.update_display()
 
     def upgrade_production_rate(self):
-        upgrade_cost = 10 * self.production_rate  # Cost increases with current production rate
-        if self.money >= upgrade_cost:
-            self.money -= upgrade_cost
-            self.production_rate += 1
-            self.update_display()
-        else:
-            needed_money = upgrade_cost - self.money
-            messagebox.showwarning("Insufficient Funds", f"You need ${needed_money} more to upgrade the production rate.")
-
-    def auto_produce_money(self):
-        while True:
-            self.money += self.production_rate
-            self.update_display()
-            self.save_progress()  # Save progress every iteration
-            time.sleep(1)  # Auto-save interval: 5 seconds
-
-    def reset_progress(self):
-        confirm = messagebox.askyesno("Reset Progress", "Are you sure you want to reset your progress?")
-        if confirm:
-            self.money = 0
-            self.production_rate = 1
-            self.save_progress()
-            self.update_display()
-
-    def update_display(self):
-        self.money_label.config(text=f"Money: ${self.money}")
-        self.production_rate_label.config(text=f"Production Rate: {self.production_rate} per second")
-        upgrade_cost = 10 * self.production_rate
-        self.upgrade_cost_label.config(text=f"Upgrade Cost: ${upgrade_cost}")
-
-def main():
-    root = tk.Tk()
-    game = IdleFactoryGame(root)
-    root.mainloop()
-
-if __name__ == "__main__":
-    main()
