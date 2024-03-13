@@ -1,5 +1,6 @@
-Quite Simple
-
-Just double left click the exe, and boom you have an idle game haha
-
-Made By RustyCMD and ChatGPT
+/// This is a simple idle game made using Rust programming language.
+/// The game can be run by double-clicking the compiled executable.
+///
+/// Author:
+/// RustyCMD - Responsible for the game logic and implementation.
+/// ChatGPT - Assisted with code comments and documentation.
